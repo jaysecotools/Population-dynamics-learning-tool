@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tasmanian Population Dynamics | Conservation & Ecosystem Management</title>
+    <style>
+        :root {
+            --primary: #2c5e1a; /* Tasmanian green */
+            --secondary: #1a5e5e; /* Ocean blue */
+            --accent: #e67e22; /* Orange for highlights */
+            --light: #f5f5f5;
+            --dark: #333;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        h1, h2, h3 {
+            color: var(--primary);
+        }
+        
+        h1 {
+            margin: 0;
+        }
+        
+        h2 {
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 8px;
+            margin-top: 40px;
+        }
+        
+        .subtitle {
+            font-style: italic;
+            margin-top: 5px;
+        }
+        
+        nav {
+            background-color: var(--secondary);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+        
+        nav li {
+            margin: 5px;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        nav a:hover {
+            background-color: var(--accent);
+        }
+        
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .main-content {
+            flex: 3;
+            min-width: 300px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar {
+            flex: 1;
+            min-width: 250px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .card {
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--accent);
+        }
+        
+        .species-card {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .species-card img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-right: 15px;
+        }
+        
+        .simulation-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .control-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input[type="range"], select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+        
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: var(--secondary);
+        }
+        
+        canvas {
+            width: 100%;
+            height: 400px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+        }
+        
+        .quiz-question {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: var(--light);
+            border-radius: 8px;
+        }
+        
+        .quiz-options {
+            margin-left: 20px;
+        }
+        
+        .quiz-options label {
+            display: block;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        
+        .quiz-feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .correct {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            background-color: var(--secondary);
+            color: white;
+            border-radius: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Tasmanian Population Dynamics</h1>
+        <div class="subtitle">Certificate III in Conservation and Ecosystem Management</div>
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="#introduction">Introduction</a></li>
+            <li><a href="#key-concepts">Key Concepts</a></li>
+            <li><a href="#tasmanian-species">Tasmanian Species</a></li>
+            <li><a href="#simulation">Population Simulation</a></li>
+            <li><a href="#case-studies">Case Studies</a></li>
+            <li><a href="#quiz">Knowledge Check</a></li>
+        </ul>
+    </nav>
+    
+    <div class="container">
+        <main class="main-content">
+            <section id="introduction">
+                <h2>Introduction to Population Dynamics</h2>
+                <div class="card">
+                    <p>Population dynamics is the study of how and why populations change over time. In Tasmania's unique ecosystems, understanding these changes is crucial for effective conservation and ecosystem management.</p>
+                    
+                    <p>As future conservation professionals, you'll need to understand:</p>
+                    <ul>
+                        <li>How populations grow and decline</li>
+                        <li>Factors affecting population size</li>
+                        <li>The impact of human activities on ecosystems</li>
+                        <li>Management strategies for threatened species</li>
+                    </ul>
+                    
+                    <p>Tasmania's isolation has created unique population dynamics with many endemic species (found nowhere else in the world) that require special conservation attention.</p>
+                </div>
+                
+                <div class="card">
+                    <h3>Why This Matters for Your Work</h3>
+                    <p>In your Certificate III studies and future conservation work, you'll:</p>
+                    <ul>
+                        <li>Monitor wildlife populations</li>
+                        <li>Assist with habitat restoration projects</li>
+                        <li>Participate in threatened species recovery programs</li>
+                        <li>Help manage invasive species</li>
+                        <li>Contribute to sustainable land management practices</li>
+                    </ul>
+                    <p>Understanding population dynamics will help you make informed decisions in all these areas.</p>
+                </div>
+            </section>
+            
+            <section id="key-concepts">
+                <h2>Key Concepts in Population Dynamics</h2>
+                
+                <div class="card">
+                    <h3>Population Growth Models</h3>
+                    <p>Populations can grow in different ways:</p>
+                    
+                    <h4>Exponential Growth</h4>
+                    <p>When resources are unlimited, populations can grow exponentially (J-shaped curve). This is rare in nature but may occur when a species colonizes a new area with no competition.</p>
+                    
+                    <h4>Logistic Growth</h4>
+                    <p>More common in nature, where growth slows as the population reaches the environment's carrying capacity (S-shaped curve). This is what we typically see in Tasmanian ecosystems.</p>
+                    
+                    <div class="simulation-container" style="height: 300px;">
+                        <canvas id="growthModelChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3>Factors Affecting Population Size</h3>
+                    <p>Population sizes change due to four main factors:</p>
+                    <ul>
+                        <li><strong>Birth rate</strong> (natality) - Number of offspring produced</li>
+                        <li><strong>Death rate</strong> (mortality) - Number of individuals dying</li>
+                        <li><strong>Immigration</strong> - Individuals moving into the population</li>
+                        <li><strong>Emigration</strong> - Individuals moving out of the population</li>
+                    </ul>
+                    
+                    <p>In Tasmania, these factors are influenced by:</p>
+                    <ul>
+                        <li>Climate and weather patterns</li>
+                        <li>Availability of food and shelter</li>
+                        <li>Disease outbreaks</li>
+                        <li>Predator-prey relationships</li>
+                        <li>Human activities (land use, pollution, conservation efforts)</li>
+                    </ul>
+                </div>
+                
+                <div class="card">
+                    <h3>Carrying Capacity</h3>
+                    <p>The maximum population size that an environment can sustain indefinitely. In Tasmania, carrying capacities can change due to:</p>
+                    <ul>
+                        <li>Habitat loss or restoration</li>
+                        <li>Climate change impacts</li>
+                        <li>Introduction of invasive species</li>
+                        <li>Changes in land management practices</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <section id="tasmanian-species">
+                <h2>Tasmanian Species Case Examples</h2>
+                
+                <div class="card">
+                    <h3>Endemic and Iconic Species</h3>
+                    
+                    <div class="species-card">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Tasmanian_Devil_Face.jpg/320px-Tasmanian_Devil_Face.jpg" alt="Tasmanian Devil">
+                        <div>
+                            <h4>Tasmanian Devil (<em>Sarcophilus harrisii</em>)</h4>
+                            <p><strong>Population Status:</strong> Endangered due to Devil Facial Tumor Disease (DFTD)</p>
+                            <p><strong>Conservation Efforts:</strong> Captive breeding programs, disease-free populations on Maria Island and Tasman Peninsula</p>
+                        </div>
+                    </div>
+                    
+                    <div class="species-card">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Thylacinus.jpg/320px-Thylacinus.jpg" alt="Thylacine">
+                        <div>
+                            <h4>Thylacine (<em>Thylacinus cynocephalus</em>)</h4>
+                            <p><strong>Population Status:</strong> Extinct (last known individual died in 1936)</p>
+                            <p><strong>Historical Factors:</strong> Hunting, habitat loss, disease, and competition with introduced species led to decline</p>
+                        </div>
+                    </div>
+                    
+                    <div class="species-card">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Eastern_quoll.jpg/320px-Eastern_quoll.jpg" alt="Eastern Quoll">
+                        <div>
+                            <h4>Eastern Quoll (<em>Dasyurus viverrinus</em>)</h4>
+                            <p><strong>Population Status:</strong> Extinct on mainland Australia, vulnerable in Tasmania</p>
+                            <p><strong>Threats:</strong> Predation by feral cats, habitat loss, vehicle collisions</p>
+                        </div>
+                    </div>
+                    
+                    <div class="species-card">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Wedge-tailed_Eagle_in_flight.jpg/320px-Wedge-tailed_Eagle_in_flight.jpg" alt="Wedge-tailed Eagle">
+                        <div>
+                            <h4>Wedge-tailed Eagle (<em>Aquila audax</em>)</h4>
+                            <p><strong>Population Status:</strong> Secure but threatened by habitat loss and human persecution</p>
+                            <p><strong>Conservation:</strong> Protected species, nest site protection programs</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3>Introduced Species Challenges</h3>
+                    <p>Introduced species can dramatically alter population dynamics of native species:</p>
+                    
+                    <h4>European Rabbit (<em>Oryctolagus cuniculus</em>)</h4>
+                    <p>Introduced in the 19th century, rabbits compete with native herbivores and cause significant land degradation. Their population dynamics show boom-bust cycles influenced by:</p>
+                    <ul>
+                        <li>Food availability</li>
+                        <li>Disease (myxomatosis, rabbit calicivirus)</li>
+                        <li>Predation</li>
+                        <li>Control measures</li>
+                    </ul>
+                    
+                    <h4>Feral Cats (<em>Felis catus</em>)</h4>
+                    <p>Predate on native small mammals, birds, and reptiles. Their populations are difficult to control due to:</p>
+                    <ul>
+                        <li>High reproductive rates</li>
+                        <li>Generalist diet</li>
+                        <li>Ability to thrive in various habitats</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <section id="simulation">
+                <h2>Population Dynamics Simulation</h2>
+                
+                <div class="simulation-container">
+                    <h3>Tasmanian Devil Population Simulator</h3>
+                    <p>Adjust the parameters below to see how different factors affect devil population dynamics over time.</p>
+                    
+                    <div class="controls">
+                        <div class="control-group">
+                            <label for="initialPopulation">Initial Population Size</label>
+                            <input type="range" id="initialPopulation" min="10" max="500" value="100">
+                            <span id="initialPopulationValue">100</span>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label for="birthRate">Birth Rate (per female per year)</label>
+                            <input type="range" id="birthRate" min="0.1" max="3" step="0.1" value="1.5">
+                            <span id="birthRateValue">1.5</span>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label for="deathRate">Natural Death Rate (%)</label>
+                            <input type="range" id="deathRate" min="1" max="30" value="10">
+                            <span id="deathRateValue">10%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="controls">
+                        <div class="control-group">
+                            <label for="dftdImpact">DFTD Impact</label>
+                            <select id="dftdImpact">
+                                <option value="none">No DFTD</option>
+                                <option value="low">Low DFTD (10% mortality)</option>
+                                <option value="medium" selected>Medium DFTD (30% mortality)</option>
+                                <option value="high">High DFTD (60% mortality)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label for="conservationEffort">Conservation Effort</label>
+                            <select id="conservationEffort">
+                                <option value="none">No Conservation</option>
+                                <option value="low">Basic Monitoring</option>
+                                <option value="medium" selected>Captive Breeding</option>
+                                <option value="high">Intensive Management</option>
+                            </select>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label for="carryingCapacity">Carrying Capacity</label>
+                            <input type="range" id="carryingCapacity" min="100" max="2000" value="1000">
+                            <span id="carryingCapacityValue">1000</span>
+                        </div>
+                    </div>
+                    
+                    <button id="runSimulation">Run Simulation</button>
+                    <button id="resetSimulation">Reset</button>
+                    
+                    <canvas id="populationChart"></canvas>
+                    
+                    <div id="simulationResults" class="card" style="display: none;">
+                        <h3>Simulation Results</h3>
+                        <p>After <span id="yearsSimulated">20</span> years, the population:</p>
+                        <ul>
+                            <li>Final population size: <span id="finalPopulation">0</span></li>
+                            <li>Peak population: <span id="peakPopulation">0</span></li>
+                            <li>Years to reach carrying capacity: <span id="yearsToCapacity">N/A</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="case-studies">
+                <h2>Tasmanian Case Studies</h2>
+                
+                <div class="card">
+                    <h3>Devil Facial Tumor Disease (DFTD)</h3>
+                    <p>A contagious cancer that has caused dramatic population declines in Tasmanian devils since the 1990s.</p>
+                    
+                    <p><strong>Population Impacts:</strong></p>
+                    <ul>
+                        <li>Local population declines of up to 90% in some areas</li>
+                        <li>Changes in age structure (fewer adults surviving)</li>
+                        <li>Potential ecological cascades (changes in prey populations)</li>
+                    </ul>
+                    
+                    <p><strong>Management Responses:</strong></p>
+                    <ul>
+                        <li>Establishment of disease-free insurance populations</li>
+                        <li>Research into genetic resistance and vaccines</li>
+                        <li>Monitoring of wild populations</li>
+                    </ul>
+                </div>
+                
+                <div class="card">
+                    <h3>Tasmanian Wedge-tailed Eagle Conservation</h3>
+                    <p>Management of this apex predator demonstrates complex population dynamics.</p>
+                    
+                    <p><strong>Challenges:</strong></p>
+                    <ul>
+                        <li>Low reproductive rate (one chick every 2 years typically)</li>
+                        <li>Territorial behavior limits population density</li>
+                        <li>Threats from habitat loss and human persecution</li>
+                    </ul>
+                    
+                    <p><strong>Conservation Strategies:</strong></p>
+                    <ul>
+                        <li>Protection of nest sites from disturbance</li>
+                        <li>Working with landowners to reduce persecution</li>
+                        <li>Monitoring of breeding success</li>
+                    </ul>
+                </div>
+                
+                <div class="card">
+                    <h3>Macquarie Island Ecosystem Restoration</h3>
+                    <p>A successful example of population management through eradication of invasive species.</p>
+                    
+                    <p><strong>Issues:</strong></p>
+                    <ul>
+                        <li>Introduced rabbits, rats, and mice were devastating native vegetation and seabird populations</li>
+                        <li>Complex predator-prey dynamics made control difficult</li>
+                    </ul>
+                    
+                    <p><strong>Solution:</strong></p>
+                    <ul>
+                        <li>World's largest eradication program (2010-2014)</li>
+                        <li>Removal of all rabbits, rats, and mice</li>
+                        <li>Resulting in dramatic recovery of native vegetation and seabird populations</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <section id="quiz">
+                <h2>Knowledge Check</h2>
+                
+                <div class="quiz-question">
+                    <p>1. Which of these best describes logistic population growth?</p>
+                    <div class="quiz-options">
+                        <label><input type="radio" name="q1" value="a"> Unlimited growth with no constraints</label>
+                        <label><input type="radio" name="q1" value="b"> Growth that slows as it approaches carrying capacity</label>
+                        <label><input type="radio" name="q1" value="c"> Immediate stabilization at carrying capacity</label>
+                        <label><input type="radio" name="q1" value="d"> Random fluctuations with no pattern</label>
+                    </div>
+                    <div class="quiz-feedback" id="feedback-q1"></div>
+                </div>
+                
+                <div class="quiz-question">
+                    <p>2. What is the main factor currently threatening Tasmanian devil populations?</p>
+                    <div class="quiz-options">
+                        <label><input type="radio" name="q2" value="a"> Habitat loss</label>
+                        <label><input type="radio" name="q2" value="b"> Devil Facial Tumor Disease</label>
+                        <label><input type="radio" name="q2" value="c"> Competition with quolls</label>
+                        <label><input type="radio" name="q2" value="d"> Climate change</label>
+                    </div>
+                    <div class="quiz-feedback" id="feedback-q2"></div>
+                </div>
+                
+                <div class="quiz-question">
+                    <p>3. Which of these is NOT one of the four main factors affecting population size?</p>
+                    <div class="quiz-options">
+                        <label><input type="radio" name="q3" value="a"> Birth rate</label>
+                        <label><input type="radio" name="q3" value="b"> Death rate</label>
+                        <label><input type="radio" name="q3" value="c"> Immigration</label>
+                        <label><input type="radio" name="q3" value="d"> Temperature</label>
+                    </div>
+                    <div class="quiz-feedback" id="feedback-q3"></div>
+                </div>
+                
+                <div class="quiz-question">
+                    <p>4. What was the key to successful ecosystem restoration on Macquarie Island?</p>
+                    <div class="quiz-options">
+                        <label><input type="radio" name="q4" value="a"> Planting more trees</label>
+                        <label><input type="radio" name="q4" value="b"> Eradication of invasive species</label>
+                        <label><input type="radio" name="q4" value="c"> Introducing new predators</label>
+                        <label><input type="radio" name="q4" value="d"> Reducing visitor numbers</label>
+                    </div>
+                    <div class="quiz-feedback" id="feedback-q4"></div>
+                </div>
+                
+                <button id="checkAnswers">Check Answers</button>
+            </section>
+        </main>
+        
+        <aside class="sidebar">
+            <div class="card">
+                <h3>Quick Facts</h3>
+                <ul>
+                    <li>Tasmania has over 1,800 known endemic species</li>
+                    <li>About 40% of Tasmania is protected in reserves and World Heritage Areas</li>
+                    <li>The Tasmanian devil is the world's largest surviving carnivorous marsupial</li>
+                    <li>Wedge-tailed eagles have a wingspan up to 2.3 meters</li>
+                    <li>Eastern quolls were declared extinct on mainland Australia in 1963</li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <h3>Key Terms</h3>
+                <dl>
+                    <dt>Population</dt>
+                    <dd>A group of individuals of the same species living in a particular area</dd>
+                    
+                    <dt>Carrying Capacity (K)</dt>
+                    <dd>The maximum population size an environment can sustain</dd>
+                    
+                    <dt>Endemic Species</dt>
+                    <dd>Species native to and found only in a specific area</dd>
+                    
+                    <dt>Exponential Growth</dt>
+                    <dd>Population growth without resource limitations</dd>
+                    
+                    <dt>Logistic Growth</dt>
+                    <dd>Population growth that slows as it approaches carrying capacity</dd>
+                </dl>
+            </div>
+            
+            <div class="card">
+                <h3>Field Techniques</h3>
+                <p>Methods you might use in population monitoring:</p>
+                <ul>
+                    <li>Camera trapping</li>
+                    <li>Transect surveys</li>
+                    <li>Mark-recapture studies</li>
+                    <li>Nest monitoring</li>
+                    <li>Scat analysis</li>
+                    <li>Call playback for bird surveys</li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <h3>Further Resources</h3>
+                <ul>
+                    <li><a href="https://www.naturalvaluesatlas.tas.gov.au/" target="_blank">Tasmanian Natural Values Atlas</a></li>
+                    <li><a href="https://dpipwe.tas.gov.au/wildlife-management" target="_blank">DPIPWE Wildlife Management</a></li>
+                    <li><a href="https://www.tassiedevil.com.au/" target="_blank">Save the Tasmanian Devil Program</a></li>
+                    <li><a href="https://www.bushheritage.org.au/places-we-protect/tasmania" target="_blank">Bush Heritage Tasmania</a></li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+    
+    <footer>
+        <p>Population Dynamics Learning Resource &copy; 2023 | Certificate III in Conservation and Ecosystem Management</p>
+        <p>Contextualized for Tasmanian ecosystems and conservation challenges</p>
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Growth model chart
+        const growthCtx = document.getElementById('growthModelChart').getContext('2d');
+        const growthChart = new Chart(growthCtx, {
+            type: 'line',
+            data: {
+                labels: Array.from({length: 20}, (_, i) => i),
+                datasets: [
+                    {
+                        label: 'Exponential Growth',
+                        data: Array.from({length: 20}, (_, i) => 10 * Math.pow(1.3, i)),
+                        borderColor: '#e67e22',
+                        backgroundColor: 'rgba(230, 126, 34, 0.1)',
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Logistic Growth (K=500)',
+                        data: Array.from({length: 20}, (_, i) => {
+                            const K = 500;
+                            const r = 0.5;
+                            const P0 = 10;
+                            return (K * P0 * Math.exp(r * i)) / (K + P0 * (Math.exp(r * i) - 1));
+                        }),
+                        borderColor: '#2c5e1a',
+                        backgroundColor: 'rgba(44, 94, 26, 0.1)',
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Population Growth Models'
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Time (years)'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Population Size'
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Population simulation
+        const popCtx = document.getElementById('populationChart').getContext('2d');
+        let populationChart = new Chart(popCtx, {
+            type: 'line',
+            data: {
+                labels: Array.from({length: 20}, (_, i) => i),
+                datasets: [{
+                    label: 'Tasmanian Devil Population',
+                    data: Array(20).fill(0),
+                    borderColor: '#2c5e1a',
+                    backgroundColor: 'rgba(44, 94, 26, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Years'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Population Size'
+                        },
+                        min: 0
+                    }
+                }
+            }
+        });
+        
+        // Update slider values display
+        document.getElementById('initialPopulation').addEventListener('input', function() {
+            document.getElementById('initialPopulationValue').textContent = this.value;
+        });
+        
+        document.getElementById('birthRate').addEventListener('input', function() {
+            document.getElementById('birthRateValue').textContent = this.value;
+        });
+        
+        document.getElementById('deathRate').addEventListener('input', function() {
+            document.getElementById('deathRateValue').textContent = this.value + '%';
+        });
+        
+        document.getElementById('carryingCapacity').addEventListener('input', function() {
+            document.getElementById('carryingCapacityValue').textContent = this.value;
+        });
+        
+        // Run simulation
+        document.getElementById('runSimulation').addEventListener('click', function() {
+            const initialPop = parseInt(document.getElementById('initialPopulation').value);
+            const birthRate = parseFloat(document.getElementById('birthRate').value);
+            const deathRate = parseInt(document.getElementById('deathRate').value) / 100;
+            const dftdImpact = document.getElementById('dftdImpact').value;
+            const conservationEffort = document.getElementById('conservationEffort').value;
+            const carryingCapacity = parseInt(document.getElementById('carryingCapacity').value);
+            
+            // Calculate DFTD mortality rate based on selection
+            let dftdMortality = 0;
+            switch(dftdImpact) {
+                case 'low': dftdMortality = 0.1; break;
+                case 'medium': dftdMortality = 0.3; break;
+                case 'high': dftdMortality = 0.6; break;
+            }
+            
+            // Calculate conservation benefit
+            let conservationBenefit = 0;
+            switch(conservationEffort) {
+                case 'low': conservationBenefit = 0.05; break;
+                case 'medium': conservationBenefit = 0.15; break;
+                case 'high': conservationBenefit = 0.3; break;
+            }
+            
+            // Run simulation
+            const years = 20;
+            const populationData = [initialPop];
+            let currentPop = initialPop;
+            let peakPop = initialPop;
+            let yearsToCapacity = null;
+            
+            for (let year = 1; year < years; year++) {
+                // Calculate births
+                const females = currentPop * 0.5; // Assume 50:50 sex ratio
+                const births = females * birthRate;
+                
+                // Calculate natural deaths
+                const naturalDeaths = currentPop * deathRate;
+                
+                // Calculate DFTD deaths
+                const dftdDeaths = currentPop * dftdMortality;
+                
+                // Calculate conservation benefit (reduces deaths)
+                const deathsSaved = (naturalDeaths + dftdDeaths) * conservationBenefit;
+                
+                // Calculate next population with carrying capacity limit
+                let nextPop = currentPop + births - naturalDeaths - dftdDeaths + deathsSaved;
+                
+                // Apply carrying capacity limit
+                if (nextPop > carryingCapacity) {
+                    nextPop = carryingCapacity - (nextPop - carryingCapacity) * 0.5; // Overshoot correction
+                    if (yearsToCapacity === null) yearsToCapacity = year;
+                }
+                
+                // Ensure population doesn't go below 0
+                nextPop = Math.max(0, Math.round(nextPop));
+                
+                populationData.push(nextPop);
+                currentPop = nextPop;
+                peakPop = Math.max(peakPop, currentPop);
+            }
+            
+            // Update chart
+            populationChart.data.datasets[0].data = populationData;
+            populationChart.update();
+            
+            // Show results
+            document.getElementById('simulationResults').style.display = 'block';
+            document.getElementById('finalPopulation').textContent = currentPop;
+            document.getElementById('peakPopulation').textContent = peakPop;
+            document.getElementById('yearsToCapacity').textContent = yearsToCapacity || 'Never reached';
+            document.getElementById('yearsSimulated').textContent = years;
+        });
+        
+        // Reset simulation
+        document.getElementById('resetSimulation').addEventListener('click', function() {
+            populationChart.data.datasets[0].data = Array(20).fill(0);
+            populationChart.update();
+            document.getElementById('simulationResults').style.display = 'none';
+        });
+        
+        // Quiz functionality
+        document.getElementById('checkAnswers').addEventListener('click', function() {
+            const answers = {
+                q1: 'b',
+                q2: 'b',
+                q3: 'd',
+                q4: 'b'
+            };
+            
+            for (const question in answers) {
+                const selectedOption = document.querySelector(`input[name="${question}"]:checked`);
+                const feedbackElement = document.getElementById(`feedback-${question}`);
+                
+                if (selectedOption) {
+                    if (selectedOption.value === answers[question]) {
+                        feedbackElement.textContent = 'Correct! Well done.';
+                        feedbackElement.className = 'quiz-feedback correct';
+                    } else {
+                        feedbackElement.textContent = 'Not quite right. Try again!';
+                        feedbackElement.className = 'quiz-feedback incorrect';
+                    }
+                    feedbackElement.style.display = 'block';
+                } else {
+                    feedbackElement.textContent = 'Please select an answer.';
+                    feedbackElement.className = 'quiz-feedback';
+                    feedbackElement.style.display = 'block';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
